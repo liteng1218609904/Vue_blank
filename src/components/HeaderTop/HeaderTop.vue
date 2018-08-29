@@ -1,6 +1,6 @@
 <template>
   <header class="header">
-    <slot name="left"></slot>
+    <slot name="left"></slot>    <!--解决公共的头部样式不一样，哪里需要引哪里-->
     <span class="header_title">
       <span class="header_title_text ellipsis">{{title}}</span>
     </span>
@@ -10,7 +10,7 @@
 <script>
   export default {
     props: {
-      title: String
+      title: String   /*各个组件将title传过来，申明接收{{title}}显示不同的title*/
     }
   }
 </script>

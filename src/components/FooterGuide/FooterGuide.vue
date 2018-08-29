@@ -1,7 +1,7 @@
 <template>
   <footer class="footer_guide border-1px">
     <span class="guide_item" :class="{on: '/msite'===$route.path}" @click="goTo('/msite')">
-      <span class="item_icon">
+      <span class="item_icon">       <!--实现点击切换界面-->
         <i class="iconfont icon-waimai"></i>
       </span>
       <span>外卖</span>
@@ -30,7 +30,7 @@
   export default {
     methods: {
       goTo (path) {
-        this.$router.replace(path)
+        this.$router.replace(path)   /*实现点击切换界面*/
       }
     }
   }

@@ -1,7 +1,7 @@
 <template>
   <section class="profile">
     <HeaderTop title="我的"/>
-    <router-link to="/login">
+    <router-link to="/login">   <!--跳转另个界面，link后放要点击的那片区域-->
       <section class="profile-number">
         <a href="javascript:" class="profile-link">
           <div class="profile_image">
