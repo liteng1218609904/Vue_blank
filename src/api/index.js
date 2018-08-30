@@ -17,3 +17,26 @@ export const reqShops = (longitude, latitude) => ajax(BASE+'/shops', {latitude, 
 /*(=() 里的顺序是固定的为经度纬度)若({ })则顺序可变，因为对象无序，query参数需要传第二个参数为对象*/
 /*'/api'解决有些请求不需要代理，需要代理的标识上*/
 
+/**
+ * 账号密码登录
+ */
+export const reqPwdLogin = (name, pwd, captcha) => ajax('/api/login_pwd', {
+  name,
+  pwd,
+  captcha
+}, 'POST')
+
+/**
+ * 获取短信验证码
+ */
+export const reqSendCode = phone => ajax('/api/sendcode', {phone})
+
+/**
+ * 手机号验证码登录
+ */
+export const reqMsgLogin = (phone, code) => ajax('/api/login_sms', {phone, code}, 'POST')
+
+/**
+ * 获取用户信息(根据会话)
+ */
+export const reqUser = () => ajax('/api/userinfo')

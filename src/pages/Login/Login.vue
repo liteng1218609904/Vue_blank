@@ -4,16 +4,19 @@
       <div class="login_header">
         <h2 class="login_logo">硅谷外卖</h2>
         <div class="login_header_title">
-          <a href="javascript:;" class="on">短信登录</a>
-          <a href="javascript:;">密码登录</a>
+          <a href="javascript:;" :class="{on: !loginWay}" @click="loginWay = false">短信登录</a>
+          <a href="javascript:;" :class="{on: loginWay}" @click="loginWay = true">密码登录</a>
         </div>
       </div>
       <div class="login_content">
         <form>
-          <div class="on">
+          <div :class="{on: !loginWay}">
             <section class="login_message">
-              <input type="tel" maxlength="11" placeholder="手机号">
-              <button disabled="disabled" class="get_verification">获取验证码</button>
+              <input type="tel" maxlength="11" placeholder="手机号"  v-model="phone">  <!--:disabled=true不能操作的情况，就不执行button-->
+              <button :disabled="!isRightPhone || computeTime>0" class="get_verification"
+                      :class="{right_phone_number: isRightPhone}" @click.prevent="sendCode"> <!--不确定有还是没有-->
+               {{computeTime > 0 ? `已发送(${computeTime}s)` : '获取验证码'}}
+              </button>
             </section>
             <section class="login_verification">
               <input type="tel" maxlength="8" placeholder="验证码">
@@ -23,21 +26,24 @@
               <a href="javascript:;">《用户服务协议》</a>
             </section>
           </div>
-          <div>
+          <div  :class="{on: loginWay}">
             <section>
               <section class="login_message">
                 <input type="tel" maxlength="11" placeholder="手机/邮箱/用户名">
               </section>
               <section class="login_verification">
-                <input type="tel" maxlength="8" placeholder="密码">
-                <div class="switch_button off">
-                  <div class="switch_circle"></div>
-                  <span class="switch_text">...</span>
+                <input :type="isShowPwd?'text':'password'" maxlength="8" placeholder="密码">
+                <div class="switch_button" :class="isShowPwd?'on':'off'" @click="isShowPwd=!isShowPwd">  <!--有on的就需要动态加 :classs实现按钮切换切换-->
+                  <div class="switch_circle" :class="{right: isShowPwd}"></div>  <!--有right证明小圆球在右侧-->
+                  <span class="switch_text">
+                    {{isShowPwd ? 'abc' : ''}}   <!--显示有文本abc,不显示没文本-->
+                  </span>
                 </div>
               </section>
               <section class="login_message">
                 <input type="text" maxlength="11" placeholder="验证码">
-                <img class="get_verification" src="./images/captcha.svg" alt="captcha">
+                <img class="get_verification" src="http://localhost:4000/captcha" alt="captcha"
+                     @click="updateCaptcha">
               </section>
             </section>
           </div>
@@ -45,17 +51,68 @@
         </form>
         <a href="javascript:;" class="about_us">关于我们</a>
       </div>
-      <a href="javascript:" class="go_back">
+      <a href="javascript:" class="go_back"  @click="$router.back()">
         <i class="iconfont icon-jiantou2"></i>
       </a>
     </div>
   </section>
 </template>
 <script>
+  import {Toast, MessageBox} from 'mint-ui'
+  import {reqSendCode} from '../../api'
+
   export default {
     data() {
-      return {}
+      return {
+        loginWay: true, // false:短信, true: 密码  loginWay登陆方式，两种可能用bool解决
+        phone: '', // 手机号
+        computeTime: 0, // 倒计时剩余的时间    /*利用它显示界面，0没有计时，显示获取验证码大于0时显示剩余多长时间*/
+        isShowPwd: false, // 是否显示密码
+      }
+    },
+    computed: {  /*<!--isRightPhone的结果由phone决定，计算-->*/
+      isRightPhone() {
+        return /^1\d{10}$/.test(this.phone)  /*匹配手机号是否正确*/
+      }
+    },
+
+
+    methods: {
+      // 发送一次性短信验证码
+      /*启动倒计时，初始30，每隔一秒钟减1，用循环定时器操作。没有输入正确手机号及正在计时时不记时*/
+      async sendCode() {
+        /*1. 实现倒计时功能*/
+        this.computeTime = 30
+        // 启循环定时器, 改变computedTime
+        const interverId = setInterval(() => {
+          this.computeTime--
+          // 当计时达到最小值时, 清除定时器
+          if (this.computeTime <= 0) {
+            this.computeTime = 0   /*小于0让其等于0*/
+            clearInterval(interverId)
+          }
+        }, 1000)
+
+
+        /*2. 发送请求去发短信验证码*/
+        const result = await reqSendCode(this.phone)  /*调用reqSendCode接口函数为异步，加async*/
+        if(result.code===0) { // 成功
+          Toast('验证码已发送')   //自动消失效果
+        } else { // 失败
+          // 停止计时
+          this.computeTime = 0
+          // alert('失败了')
+          MessageBox.alert('验证码发送失败', '提示')
+        }
+      },
+
+      // 更新显示一次性图形验证码
+      updateCaptcha(event) { // 每次请求都不一样, 浏览器就会自动发请求获取新的图片
+        event.target.src = 'http://localhost:4000/captcha?time=' + Date.now()
+      }
     }
+
+
   }
 </script>
 <style lang="stylus" rel="stylesheet/stylus">
@@ -120,6 +177,8 @@
                 color #ccc
                 font-size 14px
                 background transparent
+                &.right_phone_number    /*手机验证*/
+                  color: black
             .login_verification
               position relative
               margin-top 16px
@@ -159,6 +218,8 @@
                   background #fff
                   box-shadow 0 2px 4px 0 rgba(0,0,0,.1)
                   transition transform .3s
+                  &.right
+                    transform translateX(27px)
             .login_hint
               margin-top 12px
               color #999
