@@ -3,12 +3,17 @@
 import {
   RECEIVE_ADDRESS,
   RECEIVE_CATEGORYS,
-  RECEIVE_SHOPS
+  RECEIVE_SHOPS,
+  RECEIVE_USER,
+  RESET_USER
+
 } from './mutation-types'
 import {
   reqAddress,
   reqCategorys,
-  reqShops
+  reqShops,
+  reqUser,
+  reqLogout
 } from '../api'
 
 export default {
@@ -31,6 +36,7 @@ export default {
     const categorys = result.data
     commit(RECEIVE_CATEGORYS, {categorys})
   },
+
   // 异步获取商家列表
   async getShops ({commit, state}) {
     // 发异步ajax请求
@@ -39,10 +45,29 @@ export default {
     // 有了结果提交mutation
     const shops = result.data
     commit(RECEIVE_SHOPS, {shops})
+  },
 
+  // 保存user的同步action                          /*实现短信与密码登陆*/
+  saveUser ({commit}, user) {
+    commit(RECEIVE_USER, {user})
+  },
+
+  // 异步获取用户信息
+  async getUser ({commit}) {                      /*更新登陆状态.显示登陆注册还是用户信息*/
+    const result = await reqUser()
+    if(result.code===0) {
+      const user = result.data
+      commit(RECEIVE_USER, {user})
+    }
+  },
+  // 异步登出  (退出登陆)
+  async logout ({commit}) {
+    const result = await reqLogout()
+    if(result.code===0) {
+      commit(RESET_USER)
+    }
 
   }
-
 
 
 }

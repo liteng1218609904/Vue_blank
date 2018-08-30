@@ -20,7 +20,7 @@ export const reqShops = (longitude, latitude) => ajax(BASE+'/shops', {latitude, 
 /**
  * 账号密码登录
  */
-export const reqPwdLogin = (name, pwd, captcha) => ajax('/api/login_pwd', {
+export const reqPwdLogin = ({name, pwd, captcha}) => ajax('/api/login_pwd', {
   name,
   pwd,
   captcha
@@ -36,7 +36,14 @@ export const reqSendCode = phone => ajax('/api/sendcode', {phone})
  */
 export const reqMsgLogin = (phone, code) => ajax('/api/login_sms', {phone, code}, 'POST')
 
+
+
 /**
  * 获取用户信息(根据会话)
  */
 export const reqUser = () => ajax('/api/userinfo')
+
+/*
+退出登陆
+ */
+export const reqLogout = () => ajax('/api/logout')

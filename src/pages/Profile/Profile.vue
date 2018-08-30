@@ -1,19 +1,21 @@
 <template>
   <section class="profile">
     <HeaderTop title="我的"/>
-    <router-link to="/login">   <!--跳转另个界面，link后放要点击的那片区域-->
+    <router-link :to="user._id ? '/userinfo' : '/login'">  <!--动态添加有值为用户信息得路由-->
       <section class="profile-number">
         <a href="javascript:" class="profile-link">
           <div class="profile_image">
             <i class="iconfont icon-person"></i>
           </div>
           <div class="user-info">
-            <p class="user-info-top">登录/注册</p>
-            <p>
+            <p class="user-info-top" v-if="!user.phone">{{user.name ? user.name : '登录/注册'}}</p>
+            <p>         <!--没有手机号就为用户名登陆显示登录/注册一定是没有登录，user.name有值，显示用户名-->
                 <span class="user-icon">
                   <i class="iconfont icon-shouji icon-mobile"></i>
                 </span>
-              <span class="icon-mobile-number">暂无绑定手机号</span>
+              <span class="icon-mobile-number">
+                {{user.phone ? user.phone : '暂无绑定手机号'}} <!--._id.phoneAPI里面的name？？？？？？？？ -->
+              </span>
             </p>
           </div>
           <span class="arrow">
@@ -21,7 +23,7 @@
             </span>
         </a>
       </section>
-    </router-link>
+    </router-link><!--跳转另个界面，link后放要点击的那片区域-->
     <section class="profile_info_data border-1px">
       <ul class="info_data_list">
         <a href="javascript:" class="info_data_link">
@@ -90,13 +92,34 @@
         </div>
       </a>
     </section>
+    <section class="profile_my_order border-1px" v-show="user._id">  <!--有值时才显示退出登录按钮-->
+      <mt-button type="danger" style="width: 100%" @click="logout">退出登陆</mt-button>
+    </section>
   </section>
 </template>
 <script>
+  import {mapState} from 'vuex'
+  import {MessageBox} from 'mint-ui'
   export default {
-    data() {
-      return {}
+
+    computed: {
+      ...mapState(['user'])
+    },
+
+    methods: {
+      logout () {
+        MessageBox.confirm('确定退出吗?').then(
+          action => {  /*点击确定调用第一个函数*/
+            this.$store.dispatch('logout')
+          },
+          action => {
+            console.log('点击了取消')
+          }
+        );
+      }
     }
+
+
   }
 </script>
 <style lang="stylus" rel="stylesheet/stylus">
