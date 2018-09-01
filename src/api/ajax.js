@@ -19,10 +19,10 @@ export default function ajax(url, data={}, type='GET') {//请求地址，所有�
         paramStr += key + '=' + data[key] + '&'
       })
       if(paramStr) {
-        paramStr = paramStr.substring(0, paramStr.length-1)
+        paramStr = '? ' + paramStr.substring(0, paramStr.length-1)
       }
       // 使用axios发get请求
-      promsie = axios.get(url + '?' + paramStr)
+      promsie = axios.get(url + paramStr)
     } else {// 发送POST请求
       // 使用axios发post请求
       promsie = axios.post(url, data)

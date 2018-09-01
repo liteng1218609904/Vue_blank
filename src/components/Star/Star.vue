@@ -1,7 +1,7 @@
 <template>
   <div class="star" :class="`star-${size}`">  <!--star_24,类名不确定不用{}-->   <!--sc类名，效果显示小星星-->
-    <span class="star-item" v-for="(sc, index) in starClasses" :key="index"  :class="sc"></span>
-  </div>                           <!--每一个为sc-->
+    <span class="star-item" v-for="(sc, index) in starClasses" :key="index"  :class="sc"></span> <!--每一个为sc-->
+  </div>
 </template>
 <script>
 

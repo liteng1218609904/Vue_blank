@@ -34,7 +34,7 @@
               <section class="login_verification">
                 <input :type="isShowPwd?'text':'password'" maxlength="8" placeholder="密码"  v-model="pwd">
                 <div class="switch_button" :class="isShowPwd?'on':'off'" @click="isShowPwd=!isShowPwd">  <!--有on的就需要动态加 :classs实现按钮切换切换-->
-                  <div class="switch_circle" :class="{right: isShowPwd}"></div>  <!--有right证明小圆球在右侧-->
+                  <div class="switch_circle" :class="{right: !isShowPwd}"></div>  <!--有显示密码有right证明小圆球在右侧，为类名确定-->
                   <span class="switch_text">
                     {{isShowPwd ? 'abc' : ''}}   <!--显示有文本abc,不显示没文本-->
                   </span>
@@ -65,8 +65,8 @@
     data() {
       return {
         loginWay: true, // false:短信, true: 密码  loginWay登陆方式，两种可能用bool解决
-        phone: '', // 手机号
         computeTime: 0, // 倒计时剩余的时间    /*利用它显示界面，0没有计时，显示获取验证码大于0时显示剩余多长时间*/
+        phone: '', // 手机号
         code: '', // 短信验证码
         name: '', // 用户名
         pwd: '', // 密码
@@ -313,3 +313,6 @@
           font-size 20px
           color #999
 </style>
+
+
+

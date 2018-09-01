@@ -21,7 +21,6 @@
                 <span>{{c.title}}</span>
               </a>
             </div>
-
           </div>
           <!-- Add Pagination -->
           <div class="swiper-pagination"></div>
@@ -68,8 +67,6 @@
       //分发给action发ajax获取shops数据
       this.$store.dispatch('getShops')
     },
-
-
 
     computed: {
       ...mapState(['address', 'categorys']),
@@ -183,3 +180,5 @@
           font-size 14px
           line-height 20px
 </style>
+
+
